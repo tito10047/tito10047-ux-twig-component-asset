@@ -6,6 +6,8 @@
 
 A Symfony bundle designed to bridge the gap between **AssetMapper** and **Twig Components**. It allows you to define component-specific CSS and JS directly in your PHP classes, ensuring assets are loaded **only when needed** and without "phantom" Stimulus controllers.
 
+✨ **Live demo is available here: [https://formalitka.mostka.sk/](https://formalitka.mostka.sk/)**
+
 ## The Problem
 
 In a standard Symfony UX setup, assets (CSS/JS) are often scattered across the `assets/` directory, while logic lives in `src/` and templates in `templates/`.
