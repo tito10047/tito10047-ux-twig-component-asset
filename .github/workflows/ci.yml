@@ -107,22 +107,6 @@ jobs:
                     php-version: '8.2'
                     extensions: mbstring, xml, ctype, iconv
                     tools: composer
-            -   name: Create Dummy Symfony Project
+            -   name: Run E2E tests
                 run: |
-                    composer create-project symfony/skeleton dummy-project
-                    cd dummy-project
-                    composer config repositories.local '{"type": "path", "url": "../my-bundle", "canonical": false, "options": {"symlink": false}}'
-            -   name: Install Dependencies
-                run: |
-                    cd dummy-project
-                    composer config extra.symfony.allow-contrib true
-                    composer require webapp --no-scripts
-                    composer config minimum-stability dev
-                    composer config prefer-stable true
-                    composer require tito10047/ux-twig-component-sdc:* --no-scripts
-            -   name: Run tests in dummy project
-                run: |
-                    cd dummy-project
-                    # Here we could run some specific commands to verify the bundle is working in a real project
-                    # For now, we'll just check if the bundle is registered
-                    php bin/console debug:container twig_component_sdc
+                    ./my-bundle/tests_e2e/run_e2e.sh
