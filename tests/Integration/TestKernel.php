@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\UX\TwigComponent\TwigComponentBundle;
-use Tito10047\UX\TwigComponentSdc\TwigComponentSdc;
+use Tito10047\UX\TwigComponentSdc\TwigComponentSdcBundle;
 
 class TestKernel extends Kernel {
 
@@ -29,7 +29,7 @@ class TestKernel extends Kernel {
 			new FrameworkBundle(),
 			new TwigBundle(),
 			new TwigComponentBundle(),
-			new TwigComponentSdc(),
+			new TwigComponentSdcBundle(),
 		];
 	}
 
@@ -44,45 +44,18 @@ class TestKernel extends Kernel {
 
 		$container->loadFromExtension('twig', [
 			'default_path' => '%kernel.project_dir%/tests/Integration/Fixtures/templates',
-			"paths"        => [
-				'%kernel.project_dir%/tests/Integration/Fixtures/Component'
-			]
 		]);
 
 		$container->loadFromExtension('twig_component', [
 			'anonymous_template_directory' => 'components/',
-			'defaults'                     => [
-				'Tito10047\UX\TwigComponentSdc\Tests\Integration\Fixtures\Component\\' =>
-					'%kernel.project_dir%/tests/Integration/Fixtures/Component',
-			],
 		]);
 
-		$container->loadFromExtension('twig_component_sdc', $this->configs);
+		$configs = array_merge([
+			'component_namespace' => 'Tito10047\\UX\\TwigComponentSdc\\Tests\\Integration\\Fixtures\\Component',
+			'ux_components_dir' => '%kernel.project_dir%/tests/Integration/Fixtures/Component'
+		], $this->configs);
 
-		$container->register(Fixtures\Component\TestComponent::class)
-			->setAutoconfigured(true)
-			->setAutowired(true)
-			->addTag('twig.component', ['key' => 'TestComponent']);
-
-		$container->register(Fixtures\Component\AutoDiscovery\AutoDiscoveryComponent::class)
-			->setAutoconfigured(true)
-			->setAutowired(true)
-			->addTag('twig.component', ['key' => 'AutoDiscoveryComponent']);
-
-		$container->register(Fixtures\Component\SdcComponent::class)
-			->setAutoconfigured(true)
-			->setAutowired(true)
-			->addTag('twig.component', ['key' => 'SdcComponent']);
-
-		$container->register(Fixtures\Component\SdcComponentWithAsset::class)
-			->setAutoconfigured(true)
-			->setAutowired(true)
-			->addTag('twig.component', ['key' => 'SdcComponentWithAsset']);
-
-		$container->register(Fixtures\Component\AutoDiscovery\SdcAutoDiscoveryComponent::class)
-			->setAutoconfigured(true)
-			->setAutowired(true)
-			->addTag('twig.component', ['key' => 'SdcAutoDiscoveryComponent']);
+		$container->loadFromExtension('twig_component_sdc', $configs);
 
 		// Make services public for testing
 		$container->addCompilerPass(new class() implements \Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface {

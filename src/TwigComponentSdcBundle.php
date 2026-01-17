@@ -14,7 +14,7 @@ use Tito10047\UX\TwigComponentSdc\DependencyInjection\Configuration;
 /**
  * @link https://symfony.com/doc/current/bundles/best_practices.html
  */
-class TwigComponentSdc extends AbstractBundle implements PrependExtensionInterface
+class TwigComponentSdcBundle extends AbstractBundle implements PrependExtensionInterface
 {
     public function configure(DefinitionConfigurator $definition): void
     {
@@ -23,21 +23,23 @@ class TwigComponentSdc extends AbstractBundle implements PrependExtensionInterfa
     
     public function prepend(ContainerBuilder $builder): void
     {
-        $configs = $builder->getExtensionConfig($this->getName());
+        $configs = $builder->getExtensionConfig('twig_component_sdc');
         
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs, $builder);
 
+        $uxComponentsDir = $builder->resolveEnvPlaceholders($config['ux_components_dir'], true);
+
         $builder->prependExtensionConfig('twig', [
             'paths' => [
-                $config['ux_components_dir'] => null,
+                $uxComponentsDir => null,
             ],
         ]);
 
         $builder->prependExtensionConfig('framework', [
             'asset_mapper' => [
                 'paths' => [
-                    $config['ux_components_dir'],
+                    $uxComponentsDir,
                 ],
             ],
         ]);
@@ -45,7 +47,10 @@ class TwigComponentSdc extends AbstractBundle implements PrependExtensionInterfa
         if (null !== $config['component_namespace']) {
             $builder->prependExtensionConfig('twig_component', [
                 'defaults' => [
-                    $config['component_namespace'] => $config['ux_components_dir'],
+                    rtrim($config['component_namespace'], '\\') . '\\' => [
+                        'template_directory' => '',
+                        'directory' => $uxComponentsDir,
+                    ],
                 ],
             ]);
         }
@@ -53,7 +58,7 @@ class TwigComponentSdc extends AbstractBundle implements PrependExtensionInterfa
         if ($config['stimulus']['enabled'] && $builder->hasExtension('stimulus')) {
             $builder->prependExtensionConfig('stimulus', [
                 'controller_paths' => [
-                    $config['ux_components_dir'],
+                    $uxComponentsDir,
                 ],
             ]);
         }
@@ -69,24 +74,51 @@ class TwigComponentSdc extends AbstractBundle implements PrependExtensionInterfa
     {
         $container->import('../config/services.php');
 
-        $builder->getDefinition('Tito10047\UX\TwigComponentSdc\EventListener\AssetResponseListener')
-            ->setArgument('$placeholder', $config['placeholder']);
+        if ($builder->hasDefinition('Tito10047\UX\TwigComponentSdc\EventListener\AssetResponseListener')) {
+            $builder->getDefinition('Tito10047\UX\TwigComponentSdc\EventListener\AssetResponseListener')
+                ->setArgument('$placeholder', $config['placeholder']);
+        }
 
-        $builder->getDefinition('Tito10047\UX\TwigComponentSdc\Twig\AssetExtension')
-            ->setArgument('$placeholder', $config['placeholder']);
+        if ($builder->hasDefinition('Tito10047\UX\TwigComponentSdc\Twig\AssetExtension')) {
+            $builder->getDefinition('Tito10047\UX\TwigComponentSdc\Twig\AssetExtension')
+                ->setArgument('$placeholder', $config['placeholder']);
+        }
             
         $builder->setParameter('twig_component_sdc.auto_discovery', $config['auto_discovery']);
         $builder->setParameter('twig_component_sdc.ux_components_dir', $config['ux_components_dir']);
-        $builder->setParameter('twig_component_sdc.component_namespace', $config['component_namespace']);
-
+        
+        $namespace = null;
         if (null !== $config['component_namespace']) {
-            $builder->register(rtrim($config['component_namespace'], '\\'), rtrim($config['component_namespace'], '\\'))
-                ->setAutoconfigured(true)
-                ->setAutowired(true);
+            $namespace = rtrim($config['component_namespace'], '\\') . '\\';
+        }
+        $builder->setParameter('twig_component_sdc.component_namespace', $namespace);
+
+        if (null !== $namespace) {
+            $uxComponentsDir = $builder->resolveEnvPlaceholders($config['ux_components_dir'], true);
+
+            if (file_exists($uxComponentsDir)) {
+                $this->registerClasses($builder, $namespace, $uxComponentsDir);
+            }
         }
 
         $builder->setAlias('app.ui_components.dir', 'twig_component_sdc.ux_components_dir');
         $builder->setParameter('app.ui_components.dir', $config['ux_components_dir']);
+    }
+
+    private function registerClasses(ContainerBuilder $container, string $namespace, string $resource): void
+    {
+        $loader = new class($container, new \Symfony\Component\Config\FileLocator()) extends \Symfony\Component\DependencyInjection\Loader\PhpFileLoader {
+            public function doRegister(string $namespace, string $resource): void
+            {
+                $prototype = (new \Symfony\Component\DependencyInjection\Definition())
+                    ->setAutowired(true)
+                    ->setAutoconfigured(true);
+
+                $this->registerClasses($prototype, $namespace, $resource);
+            }
+        };
+
+        $loader->doRegister($namespace, $resource);
     }
 
     public function build(ContainerBuilder $container): void

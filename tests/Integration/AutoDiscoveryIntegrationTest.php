@@ -71,6 +71,11 @@ class AutoDiscoveryIntegrationTest extends IntegrationTestCase
 
         /** @var Environment $twig */
         $twig = $container->get(Environment::class);
+        
+        $loader = $twig->getLoader();
+        if ($loader instanceof \Twig\Loader\FilesystemLoader) {
+            $loader->addPath(realpath(__DIR__ . '/Fixtures/Component'));
+        }
 
         // Render template with component that should be auto-discovered
         $html = $twig->render('auto_discovery.html.twig');

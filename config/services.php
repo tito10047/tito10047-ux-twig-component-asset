@@ -48,4 +48,16 @@ return static function (ContainerConfigurator $container): void {
     $services->set(AssetExtension::class)
         ->args(['$placeholder' => '<!-- __UX_TWIG_COMPONENT_ASSETS__ -->'])
         ->tag('twig.extension');
+
+	$services = $container->services();
+
+//	$services->defaults()
+//		->autowire()
+//		->autoconfigure();
+//
+//	// Symfony si samo vytiahne hodnoty z parametrov kontajnera
+//	$services->load(
+//		'%twig_component_sdc.component_namespace%',
+//		'%twig_component_sdc.component_dir%'
+//	);
 };

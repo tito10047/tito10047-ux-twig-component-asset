@@ -18,9 +18,6 @@ class AsSdcComponentIntegrationTest extends KernelTestCase
     public function testSdcComponentIsRegistered(): void
     {
         $kernel = new TestKernel([]);
-        // We need to manually register the new component in the test kernel if it's not auto-discovered
-        // But TestKernel already has some manual registrations. Let's see if we can add it via a decorator or similar.
-        // Actually, TestKernel::configureContainer has hardcoded registrations.
         
         $kernel->boot();
         $container = $kernel->getContainer();

@@ -11,7 +11,11 @@ Instead of scattering your component files across `src/`, `templates/`, and `ass
 ## Quick Example
 
 Just create a directory for your component. Everything else is handled automatically.
-
+```yaml
+twig_component_sdc:
+    ux_components_dir: '%kernel.project_dir%/src/Component'
+    component_namespace: 'App\Component'
+```
 ```text
 src_component/
 └── Component/
@@ -61,21 +65,49 @@ class Alert
 1. **Install via Composer:**
 ```bash
 composer require tito10047/ux-twig-component-sdc
-
 ```
 
+2. **Register the bundle** (if not done automatically by Symfony Flex):
+```php
+// config/bundles.php
+return [
+    // ...
+    Tito10047\UX\TwigComponentSdc\TwigComponentSdcBundle::class => ['all' => true],
+];
+```
 
-2. **Add the placeholder to your base template:**
+3. **Configure the bundle:**
+Create a configuration file (e.g., `config/packages/twig_component_sdc.yaml`):
+
+```yaml
+twig_component_sdc:
+    # Directory where your SDC components are located (default: %kernel.project_dir%/src_component)
+    ux_components_dir: '%kernel.project_dir%/src/Component'
+    
+    # PHP Namespace for your components (required for auto-registration)
+    component_namespace: 'App\Component'
+    
+    # Enable/disable auto-discovery of .twig, .css, and .js files (default: true)
+    auto_discovery: true
+    
+    # Custom placeholder for asset injection (optional)
+    # placeholder: '<!-- __UX_TWIG_COMPONENT_ASSETS__ -->'
+    
+    # Stimulus integration (auto-registers component directory in Stimulus)
+    stimulus:
+        enabled: true
+```
+
+4. **Add the placeholder to your base template:**
    Place this in your `<head>` to define where the collected assets should be injected:
 ```twig
 <head>
     {# ... #}
-    {{ render_sdc_assets() }}
+    {{ render_component_assets() }}
 </head>
-
 ```
 
-
+---
 
 ## How It Works
 
@@ -92,16 +124,3 @@ composer require tito10047/ux-twig-component-sdc
 ## License
 
 MIT
-
----
-
-### Čo by som ti navrhol ako ďalší krok?
-
-Teraz, keď máš jasno v názve a vízii, môžeme sa pozrieť na **Compiler Pass**. Ten bude musieť:
-
-1. Nájsť všetky triedy v tvojom `src/Component` priečinku.
-2. Pomocou `ReflectionClass::getFileName()` zistiť, kde presne súbor leží.
-3. Skontrolovať existenciu `.twig`, `.css` a `.js` súborov v tom istom priečinku.
-4. Dynamicky zaregistrovať služby s týmito nastaveniami do Symfony DI.
-
-**Chceš, aby som ti pripravil logiku tohto skenovania v Compiler Passe?**

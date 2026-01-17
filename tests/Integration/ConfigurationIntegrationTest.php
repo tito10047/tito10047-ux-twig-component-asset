@@ -20,8 +20,11 @@ class ConfigurationIntegrationTest extends KernelTestCase
         $kernel->boot();
         $container = $kernel->getContainer();
 
-        $this->assertEquals($kernel->getProjectDir() . '/src_component', $container->getParameter('twig_component_sdc.ux_components_dir'));
-        $this->assertNull($container->getParameter('twig_component_sdc.component_namespace'));
+        $this->assertEquals(
+            realpath($kernel->getProjectDir() . '/tests/Integration/Fixtures/Component'),
+            realpath($container->getParameter('twig_component_sdc.ux_components_dir'))
+        );
+        $this->assertEquals('Tito10047\UX\TwigComponentSdc\Tests\Integration\Fixtures\Component\\', $container->getParameter('twig_component_sdc.component_namespace'));
     }
 
     public function testCustomConfigurationIsApplied(): void

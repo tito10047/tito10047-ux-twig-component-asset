@@ -21,8 +21,22 @@ final class AssetComponentCompilerPass implements CompilerPassInterface
         $autoDiscovery = $container->getParameter('twig_component_sdc.auto_discovery');
         
         $twigRoots = [];
+        if ($container->hasParameter('kernel.project_dir')) {
+            $defaultDir = $container->getParameterBag()->resolveValue('%kernel.project_dir%/src_component');
+            if (is_dir($defaultDir)) {
+                $twigRoots[] = realpath($defaultDir);
+            }
+        }
+        
         if ($container->hasParameter('twig.default_path')) {
             $twigRoots[] = $container->getParameterBag()->resolveValue($container->getParameter('twig.default_path'));
+        }
+
+        if ($container->hasParameter('twig_component_sdc.ux_components_dir')) {
+            $uxDir = $container->getParameterBag()->resolveValue($container->getParameter('twig_component_sdc.ux_components_dir'));
+            if (is_dir($uxDir)) {
+                $twigRoots[] = realpath($uxDir);
+            }
         }
         
         // Spracovanie twig paths (ak sú dostupné v konfigurácii bundle-u)
