@@ -35,6 +35,27 @@ class AutoDiscoveryIntegrationTest extends IntegrationTestCase
         $this->assertStringEndsWith('AutoDiscoveryComponent.html.twig', $templatePath);
     }
 
+    public function testAutoDiscoveryWorksWithSdcComponentAttribute(): void
+    {
+        self::bootKernel(['configs' => ['auto_discovery' => true]]);
+        $container = self::getContainer();
+
+        /** @var ComponentAssetMap $assetMap */
+        $assetMap = $container->get(ComponentAssetMap::class);
+        $map = $assetMap->getMap();
+
+        $this->assertArrayHasKey('SdcAutoDiscoveryComponent', $map);
+        $this->assertArrayHasKey('SdcAutoDiscoveryComponent_template', $map);
+        
+        $assets = $map['SdcAutoDiscoveryComponent'];
+        $paths = array_column($assets, 'path');
+        $this->assertContains('SdcAutoDiscoveryComponent.css', $paths);
+        $this->assertContains('SdcAutoDiscoveryComponent.js', $paths);
+
+        $templatePath = $map['SdcAutoDiscoveryComponent_template'];
+        $this->assertStringEndsWith('SdcAutoDiscoveryComponent.html.twig', $templatePath);
+    }
+
     public function testAutoDiscoveryFullRenderCycle(): void
     {
         $kernel = self::bootKernel(['configs' => ['auto_discovery' => true]]);

@@ -69,6 +69,21 @@ class TestKernel extends Kernel {
 			->setAutowired(true)
 			->addTag('twig.component', ['key' => 'AutoDiscoveryComponent']);
 
+		$container->register(Fixtures\Component\SdcComponent::class)
+			->setAutoconfigured(true)
+			->setAutowired(true)
+			->addTag('twig.component', ['key' => 'SdcComponent']);
+
+		$container->register(Fixtures\Component\SdcComponentWithAsset::class)
+			->setAutoconfigured(true)
+			->setAutowired(true)
+			->addTag('twig.component', ['key' => 'SdcComponentWithAsset']);
+
+		$container->register(Fixtures\Component\AutoDiscovery\SdcAutoDiscoveryComponent::class)
+			->setAutoconfigured(true)
+			->setAutowired(true)
+			->addTag('twig.component', ['key' => 'SdcAutoDiscoveryComponent']);
+
 		// Make services public for testing
 		$container->addCompilerPass(new class() implements \Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface {
 

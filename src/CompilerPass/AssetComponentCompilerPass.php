@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Tito10047\UX\TwigComponentSdc\Attribute\Asset;
+use Tito10047\UX\TwigComponentSdc\Attribute\AsSdcComponent;
 use Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap;
 use ReflectionClass;
 
@@ -81,6 +82,31 @@ final class AssetComponentCompilerPass implements CompilerPassInterface
                         'type' => $asset->type,
                         'priority' => $asset->priority,
                         'attributes' => $asset->attributes,
+                    ];
+                }
+            }
+
+            // 1b. Čítanie atribútu #[AsSdcComponent]
+            $sdcAttributes = $reflectionClass->getAttributes(AsSdcComponent::class);
+            foreach ($sdcAttributes as $attribute) {
+                /** @var AsSdcComponent $sdcComponent */
+                $sdcComponent = $attribute->newInstance();
+                
+                if ($sdcComponent->css) {
+                    $assets[] = [
+                        'path' => $sdcComponent->css,
+                        'type' => 'css',
+                        'priority' => 0,
+                        'attributes' => [],
+                    ];
+                }
+                
+                if ($sdcComponent->js) {
+                    $assets[] = [
+                        'path' => $sdcComponent->js,
+                        'type' => 'js',
+                        'priority' => 0,
+                        'attributes' => [],
                     ];
                 }
             }
