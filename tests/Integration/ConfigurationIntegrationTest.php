@@ -1,11 +1,11 @@
 <?php
 
-namespace Tito10047\UxTwigComponentAsset\Tests\Integration;
+namespace Tito10047\UX\TwigComponentSdc\Tests\Integration;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 use Symfony\UX\TwigComponent\ComponentFactory;
-use Tito10047\UxTwigComponentAsset\Tests\Integration\Fixtures\Component\TestComponent;
+use Tito10047\UX\TwigComponentSdc\Tests\Integration\Fixtures\Component\TestComponent;
 
 class ConfigurationIntegrationTest extends KernelTestCase
 {
@@ -20,28 +20,28 @@ class ConfigurationIntegrationTest extends KernelTestCase
         $kernel->boot();
         $container = $kernel->getContainer();
 
-        $this->assertEquals($kernel->getProjectDir() . '/src_component', $container->getParameter('ux_twig_component_asset.ux_components_dir'));
-        $this->assertNull($container->getParameter('ux_twig_component_asset.component_namespace'));
+        $this->assertEquals($kernel->getProjectDir() . '/src_component', $container->getParameter('twig_component_sdc.ux_components_dir'));
+        $this->assertNull($container->getParameter('twig_component_sdc.component_namespace'));
     }
 
     public function testCustomConfigurationIsApplied(): void
     {
         $kernel = new TestKernel([
             'ux_components_dir' => '%kernel.project_dir%/custom_dir',
-            'component_namespace' => 'Tito10047\\UxTwigComponentAsset\\Tests\\Integration\\Fixtures\\Component\\',
+            'component_namespace' => 'Tito10047\\UX\TwigComponentSdc\\Tests\\Integration\\Fixtures\\Component\\',
         ]);
         $kernel->boot();
         $container = $kernel->getContainer();
 
-        $this->assertEquals($kernel->getProjectDir() . '/custom_dir', $container->getParameter('ux_twig_component_asset.ux_components_dir'));
-        $this->assertEquals('Tito10047\\UxTwigComponentAsset\\Tests\\Integration\\Fixtures\\Component\\', $container->getParameter('ux_twig_component_asset.component_namespace'));
+        $this->assertEquals($kernel->getProjectDir() . '/custom_dir', $container->getParameter('twig_component_sdc.ux_components_dir'));
+        $this->assertEquals('Tito10047\\UX\TwigComponentSdc\\Tests\\Integration\\Fixtures\\Component\\', $container->getParameter('twig_component_sdc.component_namespace'));
     }
 
     public function testComponentIsLoadedFromCustomNamespace(): void
     {
         $kernel = new TestKernel([
             'ux_components_dir' => '%kernel.project_dir%/tests/Integration/Fixtures/Component',
-            'component_namespace' => 'Tito10047\\UxTwigComponentAsset\\Tests\\Integration\\Fixtures\\Component\\',
+            'component_namespace' => 'Tito10047\\UX\TwigComponentSdc\\Tests\\Integration\\Fixtures\\Component\\',
         ]);
         $kernel->boot();
         

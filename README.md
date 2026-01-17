@@ -1,81 +1,107 @@
-# UX Twig Component Asset Bundle
+# UX Twig Component SDC Bundle
 
-![Packagist Version](https://img.shields.io/packagist/v/tito10047/ux-twig-component-asset)
-![Packagist License](https://img.shields.io/packagist/l/tito10047/ux-twig-component-asset)
-![Packagist Downloads](https://img.shields.io/packagist/dt/tito10047/ux-twig-component-asset)
+A Symfony bundle that implements the **Single Directory Component (SDC)** methodology for Symfony UX. It bridges the gap between **AssetMapper** and **Twig Components** by providing a fully automated, convention-over-configuration workflow.
 
-✨ **Live demo is available here: [https://formalitka.mostka.sk/](https://formalitka.mostka.sk/)**
-# UX Twig Component Asset Bundle
+## The Concept
 
-A Symfony bundle designed to bridge the gap between **AssetMapper** and **Twig Components**. It allows you to define component-specific CSS and JS directly in your PHP classes, ensuring assets are loaded **only when needed** and without "phantom" Stimulus controllers.
+This bundle is inspired by the architectural challenges discussed in **["A Better Architecture for Your Symfony UX Twig Components"](https://hugo.alliau.me/blog/posts/a-better-architecture-for-your-symfony-ux-twig-components)** by **Hugo Alliaume**.
+
+Instead of scattering your component files across `src/`, `templates/`, and `assets/`, this bundle allows you to keep everything in one place.
 
 ## Quick Example
 
-The bundle is designed to work perfectly with a **Single Directory Component** architecture. Everything related to your component lives in one place.
+Just create a directory for your component. Everything else is handled automatically.
 
 ```text
-src/
+src_component/
 └── Component/
     └── Alert/
-        ├── Alert.php           # Logic with #[AsTwigComponent] and #[Asset]
-        ├── Alert.html.twig     # Template
-        ├── Alert.css           # Component styles (Auto-discovered!)
-        └── alert_controller.js # Optional Stimulus controller
+        ├── Alert.php           # Auto-registered logic
+        ├── Alert.html.twig     # Auto-mapped template
+        ├── Alert.css           # Auto-injected styles
+        └── alert_controller.js # Auto-mapped Stimulus controller
 
 ```
 
 ```php
 namespace App\Component\Alert;
 
-use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
-use Tito10047\UxTwigComponentAsset\Attribute\Asset;
+use Tito10047\UX\TwigComponentSdc\Attribute\AsSdcComponent;
 
-#[AsTwigComponent('Alert')]
-#[Asset] // That's it! CSS/JS/Twig are now linked to this component.
+#[AsSdcComponent] // No need to define names, templates, or assets. It's all inferred!
 class Alert
 {
     public string $type = 'info';
+    public string $message;
 }
 
 ```
 
 > [!TIP]
-> **Magic Automation:** The bundle automatically resolves the HTML template path and injects the required CSS and JS into your HTML header. No manual imports in `app.js` or dummy Stimulus controllers required.
+> **Zero Configuration Magic:** The bundle automatically registers the component, maps the template based on its location, and injects the required CSS/JS into your HTML header only when the component is rendered.
 
 ---
 
-## Why this bundle?
+## Key Features
 
-This project is a direct response to the architectural challenges discussed in **["A Better Architecture for Your Symfony UX Twig Components"](https://hugo.alliau.me/blog/posts/a-better-architecture-for-your-symfony-ux-twig-components)** by **Hugo Alliaume**.
+* **Automatic Registration:** Every class marked with `#[AsSdcComponent]` is automatically discovered and registered.
+* **Smart Template Mapping:** Forget `template: 'components/Alert.html.twig'`. If the template is in the same folder as your class, it's found automatically.
+* **Asset Orchestration:** CSS and JS files in your component folder are collected during rendering and injected into the `<head>`.
+* **No "Phantom" Controllers:** Load component-specific CSS via **AssetMapper** without the need for empty Stimulus controllers just for imports.
+* **Performance First:** * **Compiler Pass:** All file discovery happens at build time. Zero reflection in production.
+* **Response Post-processing:** Assets are injected at the end of the request.
+* **HTTP Preload:** Automatic generation of `Link` headers to trigger early browser downloads.
 
-It solves the "AssetMapper struggle": loading component-specific styles without forcing a Flash of Unstyled Content (FOUC) or creating unnecessary JavaScript overhead.
+
+
+---
 
 ## Installation & Setup
 
 1. **Install via Composer:**
 ```bash
-composer require tito10047/ux-twig-component-asset
+composer require tito10047/ux-twig-component-sdc
 
 ```
 
 
 2. **Add the placeholder to your base template:**
-   Place this in your `<head>` to tell the bundle where to inject the collected assets:
+   Place this in your `<head>` to define where the collected assets should be injected:
 ```twig
 <head>
     {# ... #}
-    {{ render_component_assets() }}
+    {{ render_sdc_assets() }}
 </head>
 
 ```
 
 
 
-## Key Features
+## How It Works
 
-* **Auto-discovery:** If `Alert.php` has a sibling `Alert.css`, it's automatically included.
-* **Performance:** Uses a **Compiler Pass** to map assets at build time, ensuring zero reflection overhead in production.
-* **Smart Injection:** Assets are injected into the response only if the component was actually rendered on the page.
-* **HTTP Preload:** Automatically adds `Link` headers for all collected assets to trigger early browser downloads.
+1. **Discovery:** During container compilation, the bundle scans your component directory. It maps PHP classes to their neighboring `.twig`, `.css`, and `.js` files.
+2. **Rendering:** When a component is used on a page, the bundle's listener intercepts the `PreCreateForRenderEvent` and logs its required assets.
+3. **Injection:** The `AssetResponseListener` replaces your Twig placeholder with the actual `<link>` and `<script>` tags and adds HTTP preload headers to the response.
 
+## Why SDC?
 
+1. **Maintainability:** Everything related to a UI element is in one folder.
+2. **Developer Experience:** No more jumping between four different directories to change one button's color.
+3. **Efficiency:** Only the CSS/JS needed for the current page is sent to the user.
+
+## License
+
+MIT
+
+---
+
+### Čo by som ti navrhol ako ďalší krok?
+
+Teraz, keď máš jasno v názve a vízii, môžeme sa pozrieť na **Compiler Pass**. Ten bude musieť:
+
+1. Nájsť všetky triedy v tvojom `src/Component` priečinku.
+2. Pomocou `ReflectionClass::getFileName()` zistiť, kde presne súbor leží.
+3. Skontrolovať existenciu `.twig`, `.css` a `.js` súborov v tom istom priečinku.
+4. Dynamicky zaregistrovať služby s týmito nastaveniami do Symfony DI.
+
+**Chceš, aby som ti pripravil logiku tohto skenovania v Compiler Passe?**

@@ -1,12 +1,12 @@
 <?php
 
-namespace Tito10047\UxTwigComponentAsset\EventListener;
+namespace Tito10047\UX\TwigComponentSdc\EventListener;
 
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\AssetMapper\AssetMapperInterface;
-use Tito10047\UxTwigComponentAsset\Service\AssetRegistry;
+use Tito10047\UX\TwigComponentSdc\Service\AssetRegistry;
 use Symfony\Component\WebLink\GenericLinkProvider;
 use Symfony\Component\WebLink\Link;
 

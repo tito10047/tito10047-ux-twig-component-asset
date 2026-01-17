@@ -1,6 +1,6 @@
 <?php
 
-namespace Tito10047\UxTwigComponentAsset\DependencyInjection;
+namespace Tito10047\UX\TwigComponentSdc\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -9,7 +9,7 @@ class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('ux_twig_component_asset');
+        $treeBuilder = new TreeBuilder('twig_component_sdc');
         $rootNode = $treeBuilder->getRootNode();
 
         $rootNode

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tito10047\UxTwigComponentAsset\Tests\Integration;
+namespace Tito10047\UX\TwigComponentSdc\Tests\Integration;
 
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\UX\TwigComponent\TwigComponentBundle;
-use Tito10047\UxTwigComponentAsset\UxTwigComponentAsset;
+use Tito10047\UX\TwigComponentSdc\TwigComponentSdc;
 
 class TestKernel extends Kernel {
 
@@ -29,7 +29,7 @@ class TestKernel extends Kernel {
 			new FrameworkBundle(),
 			new TwigBundle(),
 			new TwigComponentBundle(),
-			new UxTwigComponentAsset(),
+			new TwigComponentSdc(),
 		];
 	}
 
@@ -52,12 +52,12 @@ class TestKernel extends Kernel {
 		$container->loadFromExtension('twig_component', [
 			'anonymous_template_directory' => 'components/',
 			'defaults'                     => [
-				'Tito10047\UxTwigComponentAsset\Tests\Integration\Fixtures\Component\\' =>
+				'Tito10047\UX\TwigComponentSdc\Tests\Integration\Fixtures\Component\\' =>
 					'%kernel.project_dir%/tests/Integration/Fixtures/Component',
 			],
 		]);
 
-		$container->loadFromExtension('ux_twig_component_asset', $this->configs);
+		$container->loadFromExtension('twig_component_sdc', $this->configs);
 
 		$container->register(Fixtures\Component\TestComponent::class)
 			->setAutoconfigured(true)
@@ -74,7 +74,7 @@ class TestKernel extends Kernel {
 
 			public function process(ContainerBuilder $container): void {
 				foreach ($container->getDefinitions() as $id => $definition) {
-					if (str_starts_with($id, 'Tito10047\UxTwigComponentAsset') || str_contains($id, 'twig_component')) {
+					if (str_starts_with($id, 'Tito10047\UX\TwigComponentSdc') || str_contains($id, 'twig_component')) {
 						$definition->setPublic(true);
 					}
 				}
@@ -88,10 +88,10 @@ class TestKernel extends Kernel {
 	}
 
 	public function getCacheDir(): string {
-		return sys_get_temp_dir() . '/UxTwigComponentAsset/cache/' . spl_object_hash($this);
+		return sys_get_temp_dir() . '/UX/TwigComponentSdc/cache/' . spl_object_hash($this);
 	}
 
 	public function getLogDir(): string {
-		return sys_get_temp_dir() . '/UxTwigComponentAsset/logs/' . spl_object_hash($this);
+		return sys_get_temp_dir() . '/UX/TwigComponentSdc/logs/' . spl_object_hash($this);
 	}
 }

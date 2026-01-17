@@ -1,6 +1,6 @@
 <?php
 
-namespace Tito10047\UxTwigComponentAsset;
+namespace Tito10047\UX\TwigComponentSdc;
 
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -8,13 +8,13 @@ use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-use Tito10047\UxTwigComponentAsset\CompilerPass\AssetComponentCompilerPass;
-use Tito10047\UxTwigComponentAsset\DependencyInjection\Configuration;
+use Tito10047\UX\TwigComponentSdc\CompilerPass\AssetComponentCompilerPass;
+use Tito10047\UX\TwigComponentSdc\DependencyInjection\Configuration;
 
 /**
  * @link https://symfony.com/doc/current/bundles/best_practices.html
  */
-class UxTwigComponentAsset extends AbstractBundle implements PrependExtensionInterface
+class TwigComponentSdc extends AbstractBundle implements PrependExtensionInterface
 {
     public function configure(DefinitionConfigurator $definition): void
     {
@@ -69,15 +69,15 @@ class UxTwigComponentAsset extends AbstractBundle implements PrependExtensionInt
     {
         $container->import('../config/services.php');
 
-        $builder->getDefinition('Tito10047\UxTwigComponentAsset\EventListener\AssetResponseListener')
+        $builder->getDefinition('Tito10047\UX\TwigComponentSdc\EventListener\AssetResponseListener')
             ->setArgument('$placeholder', $config['placeholder']);
 
-        $builder->getDefinition('Tito10047\UxTwigComponentAsset\Twig\AssetExtension')
+        $builder->getDefinition('Tito10047\UX\TwigComponentSdc\Twig\AssetExtension')
             ->setArgument('$placeholder', $config['placeholder']);
             
-        $builder->setParameter('ux_twig_component_asset.auto_discovery', $config['auto_discovery']);
-        $builder->setParameter('ux_twig_component_asset.ux_components_dir', $config['ux_components_dir']);
-        $builder->setParameter('ux_twig_component_asset.component_namespace', $config['component_namespace']);
+        $builder->setParameter('twig_component_sdc.auto_discovery', $config['auto_discovery']);
+        $builder->setParameter('twig_component_sdc.ux_components_dir', $config['ux_components_dir']);
+        $builder->setParameter('twig_component_sdc.component_namespace', $config['component_namespace']);
 
         if (null !== $config['component_namespace']) {
             $builder->register(rtrim($config['component_namespace'], '\\'), rtrim($config['component_namespace'], '\\'))
@@ -85,7 +85,7 @@ class UxTwigComponentAsset extends AbstractBundle implements PrependExtensionInt
                 ->setAutowired(true);
         }
 
-        $builder->setAlias('app.ui_components.dir', 'ux_twig_component_asset.ux_components_dir');
+        $builder->setAlias('app.ui_components.dir', 'twig_component_sdc.ux_components_dir');
         $builder->setParameter('app.ui_components.dir', $config['ux_components_dir']);
     }
 

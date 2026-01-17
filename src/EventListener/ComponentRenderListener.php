@@ -1,12 +1,12 @@
 <?php
 
-namespace Tito10047\UxTwigComponentAsset\EventListener;
+namespace Tito10047\UX\TwigComponentSdc\EventListener;
 
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\UX\TwigComponent\Event\PreCreateForRenderEvent;
 use Symfony\UX\TwigComponent\Event\PreRenderEvent;
-use Tito10047\UxTwigComponentAsset\Dto\ComponentAssetMap;
-use Tito10047\UxTwigComponentAsset\Service\AssetRegistry;
+use Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap;
+use Tito10047\UX\TwigComponentSdc\Service\AssetRegistry;
 
 final class ComponentRenderListener
 {

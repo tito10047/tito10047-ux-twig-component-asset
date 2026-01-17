@@ -1,23 +1,23 @@
 <?php
 
-namespace Tito10047\UxTwigComponentAsset\CompilerPass;
+namespace Tito10047\UX\TwigComponentSdc\CompilerPass;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Tito10047\UxTwigComponentAsset\Attribute\Asset;
-use Tito10047\UxTwigComponentAsset\Dto\ComponentAssetMap;
+use Tito10047\UX\TwigComponentSdc\Attribute\Asset;
+use Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap;
 use ReflectionClass;
 
 final class AssetComponentCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasDefinition('Tito10047\UxTwigComponentAsset\Dto\ComponentAssetMap')) {
+        if (!$container->hasDefinition('Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap')) {
             return;
         }
 
-        $autoDiscovery = $container->getParameter('ux_twig_component_asset.auto_discovery');
+        $autoDiscovery = $container->getParameter('twig_component_sdc.auto_discovery');
         
         $twigRoots = [];
         if ($container->hasParameter('twig.default_path')) {
@@ -132,7 +132,7 @@ final class AssetComponentCompilerPass implements CompilerPassInterface
             }
         }
 
-        $container->getDefinition('Tito10047\UxTwigComponentAsset\Dto\ComponentAssetMap')
+        $container->getDefinition('Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap')
             ->setArgument('$map', $componentAssets);
     }
 }

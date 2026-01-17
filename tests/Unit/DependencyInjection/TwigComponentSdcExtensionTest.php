@@ -1,31 +1,31 @@
 <?php
 
-namespace Tito10047\UxTwigComponentAsset\Tests\Unit\DependencyInjection;
+namespace Tito10047\UX\TwigComponentSdc\Tests\Unit\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Tito10047\UxTwigComponentAsset\DependencyInjection\UxTwigComponentAssetExtension;
+use Tito10047\UX\TwigComponentSdc\DependencyInjection\TwigComponentSdcExtension;
 
-class UxTwigComponentAssetExtensionTest extends TestCase
+class TwigComponentSdcExtensionTest extends TestCase
 {
     public function testLoadSetsParameters(): void
     {
         $container = new ContainerBuilder();
-        $extension = new UxTwigComponentAssetExtension();
+        $extension = new TwigComponentSdcExtension();
 
         $extension->load([['component_namespace' => 'App\\Component\\']], $container);
 
-        $this->assertTrue($container->hasParameter('ux_twig_component_asset.auto_discovery'));
-        $this->assertEquals('%kernel.project_dir%/src_component', $container->getParameter('ux_twig_component_asset.ux_components_dir'));
-        $this->assertEquals('App\\Component\\', $container->getParameter('ux_twig_component_asset.component_namespace'));
+        $this->assertTrue($container->hasParameter('twig_component_sdc.auto_discovery'));
+        $this->assertEquals('%kernel.project_dir%/src_component', $container->getParameter('twig_component_sdc.ux_components_dir'));
+        $this->assertEquals('App\\Component\\', $container->getParameter('twig_component_sdc.component_namespace'));
     }
 
     public function testPrependAddsConfiguration(): void
     {
         $container = new ContainerBuilder();
-        $extension = new UxTwigComponentAssetExtension();
+        $extension = new TwigComponentSdcExtension();
 
-        $container->prependExtensionConfig('ux_twig_component_asset', ['component_namespace' => 'App\\Component\\']);
+        $container->prependExtensionConfig('twig_component_sdc', ['component_namespace' => 'App\\Component\\']);
 
         $extension->prepend($container);
 

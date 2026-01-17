@@ -1,6 +1,6 @@
 <?php
 
-namespace Tito10047\UxTwigComponentAsset\Twig;
+namespace Tito10047\UX\TwigComponentSdc\Twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;

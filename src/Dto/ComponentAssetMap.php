@@ -1,6 +1,6 @@
 <?php
 
-namespace Tito10047\UxTwigComponentAsset\Dto;
+namespace Tito10047\UX\TwigComponentSdc\Dto;
 
 final class ComponentAssetMap
 {

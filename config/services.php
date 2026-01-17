@@ -2,11 +2,11 @@
 
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-use Tito10047\UxTwigComponentAsset\Dto\ComponentAssetMap;
-use Tito10047\UxTwigComponentAsset\Service\AssetRegistry;
-use Tito10047\UxTwigComponentAsset\EventListener\AssetResponseListener;
-use Tito10047\UxTwigComponentAsset\EventListener\ComponentRenderListener;
-use Tito10047\UxTwigComponentAsset\Twig\AssetExtension;
+use Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap;
+use Tito10047\UX\TwigComponentSdc\Service\AssetRegistry;
+use Tito10047\UX\TwigComponentSdc\EventListener\AssetResponseListener;
+use Tito10047\UX\TwigComponentSdc\EventListener\ComponentRenderListener;
+use Tito10047\UX\TwigComponentSdc\Twig\AssetExtension;
 use Symfony\Component\AssetMapper\AssetMapperInterface;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 

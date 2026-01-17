@@ -1,6 +1,6 @@
 <?php
 
-namespace Tito10047\UxTwigComponentAsset\DependencyInjection;
+namespace Tito10047\UX\TwigComponentSdc\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\Config\FileLocator;
 
-class UxTwigComponentAssetExtension extends Extension implements PrependExtensionInterface
+class TwigComponentSdcExtension extends Extension implements PrependExtensionInterface
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -18,12 +18,12 @@ class UxTwigComponentAssetExtension extends Extension implements PrependExtensio
         $loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
         $loader->load('services.php');
 
-        $container->getDefinition('Tito10047\UxTwigComponentAsset\EventListener\AssetResponseListener')
+        $container->getDefinition('Tito10047\UX\TwigComponentSdc\EventListener\AssetResponseListener')
             ->setArgument('$placeholder', $config['placeholder']);
             
-        $container->setParameter('ux_twig_component_asset.auto_discovery', $config['auto_discovery']);
-        $container->setParameter('ux_twig_component_asset.ux_components_dir', $config['ux_components_dir']);
-        $container->setParameter('ux_twig_component_asset.component_namespace', $config['component_namespace']);
+        $container->setParameter('twig_component_sdc.auto_discovery', $config['auto_discovery']);
+        $container->setParameter('twig_component_sdc.ux_components_dir', $config['ux_components_dir']);
+        $container->setParameter('twig_component_sdc.component_namespace', $config['component_namespace']);
 
         if (null !== $config['component_namespace']) {
             $container->register(rtrim($config['component_namespace'], '\\'), rtrim($config['component_namespace'], '\\'))
@@ -31,7 +31,7 @@ class UxTwigComponentAssetExtension extends Extension implements PrependExtensio
                 ->setAutowired(true);
         }
 
-        $container->setAlias('app.ui_components.dir', 'ux_twig_component_asset.ux_components_dir');
+        $container->setAlias('app.ui_components.dir', 'twig_component_sdc.ux_components_dir');
         $container->setParameter('app.ui_components.dir', $config['ux_components_dir']);
     }
 
@@ -73,6 +73,6 @@ class UxTwigComponentAssetExtension extends Extension implements PrependExtensio
 
     public function getAlias(): string
     {
-        return 'ux_twig_component_asset';
+        return 'twig_component_sdc';
     }
 }

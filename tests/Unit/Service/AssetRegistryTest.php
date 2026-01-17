@@ -1,9 +1,9 @@
 <?php
 
-namespace Tito10047\UxTwigComponentAsset\Tests\Unit\Service;
+namespace Tito10047\UX\TwigComponentSdc\Tests\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
-use Tito10047\UxTwigComponentAsset\Service\AssetRegistry;
+use Tito10047\UX\TwigComponentSdc\Service\AssetRegistry;
 
 final class AssetRegistryTest extends TestCase
 {
