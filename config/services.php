@@ -1,7 +1,7 @@
 <?php
 
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-use Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap;
+use Tito10047\UX\TwigComponentSdc\Runtime\SdcMetadataRegistry;
 use Tito10047\UX\TwigComponentSdc\Service\AssetRegistry;
 use Tito10047\UX\TwigComponentSdc\EventListener\AssetResponseListener;
 use Tito10047\UX\TwigComponentSdc\EventListener\ComponentRenderListener;
@@ -15,9 +15,6 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
  */
 return static function (ContainerConfigurator $container): void {
     $services = $container->services();
-
-    $services->set(ComponentAssetMap::class)
-        ->args(['$map' => []]);
 
     $services->set(AssetRegistry::class);
 
@@ -33,7 +30,7 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(ComponentRenderListener::class)
         ->args([
-            service(ComponentAssetMap::class),
+            service(SdcMetadataRegistry::class),
             service(AssetRegistry::class),
         ])
         ->tag('kernel.event_listener', [

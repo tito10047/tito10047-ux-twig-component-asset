@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap;
+use Tito10047\UX\TwigComponentSdc\Runtime\SdcMetadataRegistry;
 use Tito10047\UX\TwigComponentSdc\EventListener\AssetResponseListener;
 use Twig\Environment;
 
@@ -19,14 +19,14 @@ class AssetIntegrationTest extends IntegrationTestCase
         self::bootKernel();
         $container = self::getContainer();
 
-        /** @var ComponentAssetMap $assetMap */
-        $assetMap = $container->get(ComponentAssetMap::class);
-        $map = $assetMap->getMap();
+        /** @var SdcMetadataRegistry $metadataRegistry */
+        $metadataRegistry = $container->get(SdcMetadataRegistry::class);
 
-        $this->assertArrayHasKey('TestComponent', $map);
-        $this->assertCount(2, $map['TestComponent']);
+        $this->assertNotNull($metadataRegistry->getMetadata('TestComponent'));
+        $assets = $metadataRegistry->getMetadata('TestComponent');
+        $this->assertCount(2, $assets);
 
-        $paths = array_column($map['TestComponent'], 'path');
+        $paths = array_column($assets, 'path');
         $this->assertContains('css/test.css', $paths);
         $this->assertContains('js/test.js', $paths);
     }

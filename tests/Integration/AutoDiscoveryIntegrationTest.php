@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap;
+use Tito10047\UX\TwigComponentSdc\Runtime\SdcMetadataRegistry;
 use Tito10047\UX\TwigComponentSdc\EventListener\AssetResponseListener;
 use Twig\Environment;
 
@@ -19,19 +19,18 @@ class AutoDiscoveryIntegrationTest extends IntegrationTestCase
         self::bootKernel(['configs' => ['auto_discovery' => true]]);
         $container = self::getContainer();
 
-        /** @var ComponentAssetMap $assetMap */
-        $assetMap = $container->get(ComponentAssetMap::class);
-        $map = $assetMap->getMap();
+        /** @var SdcMetadataRegistry $metadataRegistry */
+        $metadataRegistry = $container->get(SdcMetadataRegistry::class);
 
-        $this->assertArrayHasKey('AutoDiscoveryComponent', $map);
-        $this->assertArrayHasKey('AutoDiscoveryComponent_template', $map);
+        $this->assertNotNull($metadataRegistry->getMetadata('AutoDiscoveryComponent'));
+        $this->assertNotNull($metadataRegistry->getMetadata('AutoDiscoveryComponent_template'));
 
-        $assets = $map['AutoDiscoveryComponent'];
+        $assets = $metadataRegistry->getMetadata('AutoDiscoveryComponent');
         $paths = array_column($assets, 'path');
         $this->assertContains('AutoDiscoveryComponent.css', $paths);
         $this->assertContains('AutoDiscoveryComponent.js', $paths);
 
-        $templatePath = $map['AutoDiscoveryComponent_template'];
+        $templatePath = $metadataRegistry->getMetadata('AutoDiscoveryComponent_template');
         $this->assertStringEndsWith('AutoDiscoveryComponent.html.twig', $templatePath);
     }
 
@@ -40,19 +39,18 @@ class AutoDiscoveryIntegrationTest extends IntegrationTestCase
         self::bootKernel(['configs' => ['auto_discovery' => true]]);
         $container = self::getContainer();
 
-        /** @var ComponentAssetMap $assetMap */
-        $assetMap = $container->get(ComponentAssetMap::class);
-        $map = $assetMap->getMap();
+        /** @var SdcMetadataRegistry $metadataRegistry */
+        $metadataRegistry = $container->get(SdcMetadataRegistry::class);
 
-        $this->assertArrayHasKey('SdcAutoDiscoveryComponent', $map);
-        $this->assertArrayHasKey('SdcAutoDiscoveryComponent_template', $map);
+        $this->assertNotNull($metadataRegistry->getMetadata('SdcAutoDiscoveryComponent'));
+        $this->assertNotNull($metadataRegistry->getMetadata('SdcAutoDiscoveryComponent_template'));
 
-        $assets = $map['SdcAutoDiscoveryComponent'];
+        $assets = $metadataRegistry->getMetadata('SdcAutoDiscoveryComponent');
         $paths = array_column($assets, 'path');
         $this->assertContains('SdcAutoDiscoveryComponent.css', $paths);
         $this->assertContains('SdcAutoDiscoveryComponent.js', $paths);
 
-        $templatePath = $map['SdcAutoDiscoveryComponent_template'];
+        $templatePath = $metadataRegistry->getMetadata('SdcAutoDiscoveryComponent_template');
         $this->assertStringEndsWith('SdcAutoDiscoveryComponent.html.twig', $templatePath);
     }
 

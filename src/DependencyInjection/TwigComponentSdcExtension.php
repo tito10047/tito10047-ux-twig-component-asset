@@ -7,6 +7,7 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\Config\FileLocator;
+use Tito10047\UX\TwigComponentSdc\Runtime\SdcMetadataRegistry;
 
 class TwigComponentSdcExtension extends Extension implements PrependExtensionInterface
 {
@@ -47,6 +48,10 @@ class TwigComponentSdcExtension extends Extension implements PrependExtensionInt
 
         $container->setAlias('app.ui_components.dir', 'twig_component_sdc.ux_components_dir');
         $container->setParameter('app.ui_components.dir', $config['ux_components_dir']);
+
+        $container->register(SdcMetadataRegistry::class)
+            ->setArgument('$cachePath', '%kernel.cache_dir%/twig_component_sdc_metadata.php')
+            ->setPublic(true); // Set to true for easier testing in Integration tests
     }
 
     public function prepend(ContainerBuilder $container): void

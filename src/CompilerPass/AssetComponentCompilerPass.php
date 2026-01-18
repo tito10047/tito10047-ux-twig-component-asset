@@ -7,14 +7,14 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Tito10047\UX\TwigComponentSdc\Attribute\Asset;
 use Tito10047\UX\TwigComponentSdc\Attribute\AsSdcComponent;
-use Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap;
+use Tito10047\UX\TwigComponentSdc\Runtime\SdcMetadataRegistry;
 use ReflectionClass;
 
 final class AssetComponentCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasDefinition('Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap')) {
+        if (!$container->hasDefinition(SdcMetadataRegistry::class)) {
             return;
         }
 
@@ -174,7 +174,20 @@ final class AssetComponentCompilerPass implements CompilerPassInterface
             }
         }
 
-        $container->getDefinition('Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap')
-            ->setArgument('$map', $componentAssets);
+        $registryDefinition = $container->getDefinition(SdcMetadataRegistry::class);
+        $cachePath = $container->getParameterBag()->resolveValue($registryDefinition->getArgument('$cachePath'));
+
+        $this->dumpCache($cachePath, $componentAssets);
+    }
+
+    private function dumpCache(string $path, array $data): void
+    {
+        $directory = dirname($path);
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
+        $content = '<?php return ' . var_export($data, true) . ';';
+        file_put_contents($path, $content);
     }
 }

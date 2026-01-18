@@ -4,7 +4,7 @@ namespace Tito10047\UX\TwigComponentSdc\Tests\Integration;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\UX\TwigComponent\ComponentFactory;
-use Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap;
+use Tito10047\UX\TwigComponentSdc\Runtime\SdcMetadataRegistry;
 use Tito10047\UX\TwigComponentSdc\Tests\Integration\Fixtures\Component\SdcComponent;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -38,9 +38,9 @@ class AsSdcComponentIntegrationTest extends KernelTestCase
         $kernel->boot();
         $container = $kernel->getContainer();
 
-        /** @var ComponentAssetMap $assetMap */
-        $assetMap = $container->get(ComponentAssetMap::class);
-        $assets = $assetMap->getAssetsForComponent('SdcComponent');
+        /** @var SdcMetadataRegistry $metadataRegistry */
+        $metadataRegistry = $container->get(SdcMetadataRegistry::class);
+        $assets = $metadataRegistry->getMetadata('SdcComponent');
 
         $this->assertCount(2, $assets);
 
@@ -57,9 +57,9 @@ class AsSdcComponentIntegrationTest extends KernelTestCase
         $kernel->boot();
         $container = $kernel->getContainer();
 
-        /** @var ComponentAssetMap $assetMap */
-        $assetMap = $container->get(ComponentAssetMap::class);
-        $assets = $assetMap->getAssetsForComponent('SdcComponentWithAsset');
+        /** @var SdcMetadataRegistry $metadataRegistry */
+        $metadataRegistry = $container->get(SdcMetadataRegistry::class);
+        $assets = $metadataRegistry->getMetadata('SdcComponentWithAsset');
 
         $this->assertCount(3, $assets);
 

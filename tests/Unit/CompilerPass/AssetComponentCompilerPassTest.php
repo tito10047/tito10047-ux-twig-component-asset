@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Tito10047\UX\TwigComponentSdc\Attribute\Asset;
 use Tito10047\UX\TwigComponentSdc\CompilerPass\AssetComponentCompilerPass;
-use Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap;
+use Tito10047\UX\TwigComponentSdc\Runtime\SdcMetadataRegistry;
 
 #[Asset(path: 'test.css', priority: 5)]
 class MockComponent
@@ -16,14 +16,31 @@ class MockComponent
 
 final class AssetComponentCompilerPassTest extends TestCase
 {
+    private string $cachePath;
+
+    protected function setUp(): void
+    {
+        $this->cachePath = sys_get_temp_dir() . '/compiler_pass_test_metadata.php';
+        if (file_exists($this->cachePath)) {
+            unlink($this->cachePath);
+        }
+    }
+
+    protected function tearDown(): void
+    {
+        if (file_exists($this->cachePath)) {
+            unlink($this->cachePath);
+        }
+    }
+
     public function testProcess(): void
     {
         $container = new ContainerBuilder();
         $container->setParameter('twig_component_sdc.auto_discovery', false);
 
-        $mapDefinition = new Definition(ComponentAssetMap::class);
-        $mapDefinition->setArgument('$map', []);
-        $container->setDefinition('Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap', $mapDefinition);
+        $registryDefinition = new Definition(SdcMetadataRegistry::class);
+        $registryDefinition->setArgument('$cachePath', $this->cachePath);
+        $container->setDefinition(SdcMetadataRegistry::class, $registryDefinition);
 
         $componentDefinition = new Definition(MockComponent::class);
         $componentDefinition->addTag('twig.component', ['key' => 'test_component']);
@@ -32,7 +49,8 @@ final class AssetComponentCompilerPassTest extends TestCase
         $pass = new AssetComponentCompilerPass();
         $pass->process($container);
 
-        $map = $container->getDefinition('Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap')->getArgument('$map');
+        $this->assertFileExists($this->cachePath);
+        $map = require $this->cachePath;
 
         $this->assertArrayHasKey('test_component', $map);
         $this->assertSame('test.css', $map['test_component'][0]['path']);

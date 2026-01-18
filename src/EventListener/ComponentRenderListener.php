@@ -5,13 +5,13 @@ namespace Tito10047\UX\TwigComponentSdc\EventListener;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\UX\TwigComponent\Event\PreCreateForRenderEvent;
 use Symfony\UX\TwigComponent\Event\PreRenderEvent;
-use Tito10047\UX\TwigComponentSdc\Dto\ComponentAssetMap;
+use Tito10047\UX\TwigComponentSdc\Runtime\SdcMetadataRegistry;
 use Tito10047\UX\TwigComponentSdc\Service\AssetRegistry;
 
 final class ComponentRenderListener
 {
     public function __construct(
-        private ComponentAssetMap $assetMap,
+        private SdcMetadataRegistry $metadataRegistry,
         private AssetRegistry $assetRegistry
     ) {
     }
@@ -20,7 +20,7 @@ final class ComponentRenderListener
     public function onPreCreate(PreCreateForRenderEvent $event): void
     {
         $componentName = $event->getName();
-        $assets = $this->assetMap->getAssetsForComponent($componentName);
+        $assets = $this->metadataRegistry->getMetadata($componentName) ?? [];
 
         foreach ($assets as $asset) {
             $type = $asset['type'];
@@ -41,7 +41,7 @@ final class ComponentRenderListener
     public function onPreRender(PreRenderEvent $event): void
     {
         $componentName = $event->getMetadata()->getName();
-        $templatePath = $this->assetMap->getMap()[$componentName . '_template'] ?? null;
+        $templatePath = $this->metadataRegistry->getMetadata($componentName . '_template');
 
         if (is_string($templatePath)) {
             $event->setTemplate($templatePath);
