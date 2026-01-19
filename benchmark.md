@@ -1,24 +1,23 @@
-### Benchmark Výsledky
+### Benchmark Výsledky (Nové meranie)
 
-#### Pred Optimalizáciou (2026-01-19)
+#### Pred Optimalizáciou (main)
 
-| Benchmark | Subject | Time Avg | Mem Peak |
-|-----------|---------|----------|----------|
-| ComponentBenchmark | benchWarmupClassic | 5,850.800μs | 2,133,520b |
-| ComponentBenchmark | benchWarmupSdc | 7,414.933μs | 2,133,256b |
-| ComponentBenchmark | benchRenderClassic | 28,865.120μs | 25,926,640b |
-| ComponentBenchmark | benchRenderSdc | 29,671.860μs | 30,537,152b |
+| Benchmark | Mode (čas) | Memory Peak |
+|-----------|------------|-------------|
+| benchWarmupClassic | 23.502ms | 2.133mb |
+| benchWarmupSdc | 23.535ms | 2.133mb |
+| benchRenderClassic | 30.583ms | 25.890mb |
+| benchRenderSdc | 29.135ms | 30.508mb |
 
-#### Po Optimalizácii (2026-01-19)
+#### Po Optimalizácii (optimizing)
 
-| Benchmark | Subject | Time Avg | Mem Peak |
-|-----------|---------|----------|----------|
-| ComponentBenchmark | benchWarmupClassic | 4,387.600μs | 2,133,520b |
-| ComponentBenchmark | benchWarmupSdc | 5,261.467μs | 2,133,256b |
-| ComponentBenchmark | benchRenderClassic | 28,101.267μs | 25,926,640b |
-| ComponentBenchmark | benchRenderSdc | 29,254.133μs | 30,537,152b |
+| Benchmark | Mode (čas) | Memory Peak |
+|-----------|------------|-------------|
+| benchWarmupClassic | 23.552ms | 2.133mb |
+| benchWarmupSdc | 30.067ms | 2.133mb |
+| benchRenderClassic | 28.260ms | 25.890mb |
+| benchRenderSdc | 29.316ms | 30.508mb |
 
-**Záver:**
-Optimalizácia priniesla mierne zlepšenie v čase renderovania (cca 1-2%), ale hlavne pripravila infraštruktúru pre efektívnejšie spracovanie assetov v produkčnom prostredí bez nutnosti volania `AssetMapper` v každom requeste.
+---
 
-*Poznámka: Výsledky sú priemery z 3-5 iterácií.*
+*Poznámka: benchWarmupSdc v optimizing vetve vykazuje vyšší čas zrejme kvôli zmenám v kompilácii registra, kým render časy zostávajú podobné.*
